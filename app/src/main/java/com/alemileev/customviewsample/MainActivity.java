@@ -7,6 +7,7 @@ import android.widget.TextView;
 
 import com.alemileev.customviewsample.model.Airport;
 import com.alemileev.customviewsample.model.Flight;
+import com.alemileev.customviewsample.widget.FlightView;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -27,6 +28,12 @@ public class MainActivity extends AppCompatActivity {
 
         // Bind flight to the simple XML implementation
         final View xmlFlightView = findViewById(R.id.xml_flight_view);
+        xmlFlightView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                // Nothing to do here
+            }
+        });
         final TextView numberTextView = xmlFlightView.findViewById(R.id.number_tv);
         final TextView departureDateTextView = xmlFlightView.findViewById(R.id.departure_date_tv);
         final TextView takeOffTimeTextView = xmlFlightView.findViewById(R.id.take_off_time_tv);
@@ -49,6 +56,16 @@ public class MainActivity extends AppCompatActivity {
         arrivalCityTextView.setText(FLIGHT.arrivalAirport.city);
         arrivalAirportNameTextView.setText(FLIGHT.arrivalAirport.name);
         durationTextView.setText(FLIGHT.duration);
+
+        // Bind flight to the custom ViewGroup
+        final FlightView customFlightView = findViewById(R.id.custom_flight_view);
+        customFlightView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                // Nothing to do here
+            }
+        });
+        customFlightView.bindFlight(FLIGHT);
     }
 
 }
