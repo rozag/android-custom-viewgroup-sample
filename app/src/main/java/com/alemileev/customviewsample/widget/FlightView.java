@@ -10,6 +10,7 @@ import android.support.v4.content.ContextCompat;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
 import android.util.TypedValue;
+import android.view.Gravity;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -31,6 +32,7 @@ public final class FlightView extends ViewGroup {
     @Px private int paddingVertical;
     @Px private int paddingInner;
     @Px private int dividerHeight;
+    @Px private int cornerRadius;
 
     @Dimension(unit = Dimension.SP) private float primaryTextSize;
     @Dimension(unit = Dimension.SP) private float secondaryTextSize;
@@ -79,6 +81,7 @@ public final class FlightView extends ViewGroup {
         paddingVertical = dpToPx(8);
         paddingInner = dpToPx(8);
         dividerHeight = dpToPx(1);
+        cornerRadius = dpToPx(16);
 
         // Prepare text sizes
         primaryTextSize = 24;
@@ -88,51 +91,61 @@ public final class FlightView extends ViewGroup {
         numberTextView = new TextView(context);
         numberTextView.setTextSize(primaryTextSize);
         numberTextView.setTextColor(headerTextColor);
+        numberTextView.setGravity(Gravity.START);
         addView(numberTextView);
 
         departureDateTextView = new TextView(context);
         departureDateTextView.setTextSize(primaryTextSize);
         departureDateTextView.setTextColor(headerTextColor);
+        departureDateTextView.setGravity(Gravity.END);
         addView(departureDateTextView);
 
         takeOffTimeTextView = new TextView(context);
         takeOffTimeTextView.setTextSize(primaryTextSize);
         takeOffTimeTextView.setTextColor(primaryTextColor);
+        takeOffTimeTextView.setGravity(Gravity.START);
         addView(takeOffTimeTextView);
 
         departureCodeTextView = new TextView(context);
         departureCodeTextView.setTextSize(primaryTextSize);
         departureCodeTextView.setTextColor(primaryTextColor);
+        departureCodeTextView.setGravity(Gravity.START);
         addView(departureCodeTextView);
 
         departureCityTextView = new TextView(context);
         departureCityTextView.setTextSize(secondaryTextSize);
         departureCityTextView.setTextColor(secondaryTextColor);
+        departureCityTextView.setGravity(Gravity.START);
         addView(departureCityTextView);
 
         departureAirportNameTextView = new TextView(context);
         departureAirportNameTextView.setTextSize(secondaryTextSize);
         departureAirportNameTextView.setTextColor(secondaryTextColor);
+        departureAirportNameTextView.setGravity(Gravity.START);
         addView(departureAirportNameTextView);
 
         landingTimeTextView = new TextView(context);
         landingTimeTextView.setTextSize(primaryTextSize);
         landingTimeTextView.setTextColor(primaryTextColor);
+        landingTimeTextView.setGravity(Gravity.END);
         addView(landingTimeTextView);
 
         arrivalCodeTextView = new TextView(context);
         arrivalCodeTextView.setTextSize(primaryTextSize);
         arrivalCodeTextView.setTextColor(primaryTextColor);
+        arrivalCodeTextView.setGravity(Gravity.END);
         addView(arrivalCodeTextView);
 
         arrivalCityTextView = new TextView(context);
         arrivalCityTextView.setTextSize(secondaryTextSize);
         arrivalCityTextView.setTextColor(secondaryTextColor);
+        arrivalCityTextView.setGravity(Gravity.END);
         addView(arrivalCityTextView);
 
         arrivalAirportNameTextView = new TextView(context);
         arrivalAirportNameTextView.setTextSize(secondaryTextSize);
         arrivalAirportNameTextView.setTextColor(secondaryTextColor);
+        arrivalAirportNameTextView.setGravity(Gravity.END);
         addView(arrivalAirportNameTextView);
 
         durationTextView = new TextView(context);
@@ -151,8 +164,20 @@ public final class FlightView extends ViewGroup {
         measureChild(planeImageView, widthMeasureSpec, heightMeasureSpec);
 
         // Determine text width for the header views and the body views
-        final int bodyTextWidth = (widthMeasureSpec - planeImageView.getMeasuredWidth()) / 2 - paddingHorizontal - paddingInner;
+        final int bodyTextWidth = (widthMeasureSpec - planeImageView.getMeasuredWidth()) / 2 - paddingHorizontal;
         final int headerTextWidth = widthMeasureSpec / 2 - paddingHorizontal;
+
+        // Specify max width for the TextViews
+        numberTextView.setMaxWidth(headerTextWidth);
+        departureDateTextView.setMaxWidth(headerTextWidth);
+        takeOffTimeTextView.setMaxWidth(headerTextWidth);
+        departureCodeTextView.setMaxWidth(bodyTextWidth);
+        departureCityTextView.setMaxWidth(bodyTextWidth);
+        departureAirportNameTextView.setMaxWidth(bodyTextWidth);
+        landingTimeTextView.setMaxWidth(bodyTextWidth);
+        arrivalCodeTextView.setMaxWidth(bodyTextWidth);
+        arrivalCityTextView.setMaxWidth(bodyTextWidth);
+        arrivalAirportNameTextView.setMaxWidth(bodyTextWidth);
 
         // Measure children
         measureChild(numberTextView, headerTextWidth, heightMeasureSpec);
@@ -189,7 +214,107 @@ public final class FlightView extends ViewGroup {
 
     @Override
     protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
-        // TODO:
+        // Prepare some dimens
+        final int width = right - left;
+        final int leftBorder = paddingHorizontal;
+        final int rightBorder = width - paddingHorizontal;
+        final int centerHorizontal = width / 2;
+        final int centerVertical = (bottom - top) / 2;
+
+        // Counter for the spent height
+        int heightUsed = paddingVertical;
+
+        // Layout rows one-by-one
+        // 1. Header
+        numberTextView.layout(
+                leftBorder,
+                heightUsed,
+                leftBorder + numberTextView.getMeasuredWidth(),
+                heightUsed + numberTextView.getMeasuredHeight()
+        );
+        departureDateTextView.layout(
+                rightBorder - departureDateTextView.getMeasuredWidth(),
+                heightUsed,
+                right,
+                heightUsed + departureDateTextView.getMeasuredHeight()
+        );
+        heightUsed += numberTextView.getMeasuredHeight() + paddingInner + paddingInner;
+
+        // 2. Take off and landing times
+        takeOffTimeTextView.layout(
+                leftBorder,
+                heightUsed,
+                leftBorder + takeOffTimeTextView.getMeasuredWidth(),
+                heightUsed + takeOffTimeTextView.getMeasuredHeight()
+        );
+        landingTimeTextView.layout(
+                rightBorder - landingTimeTextView.getMeasuredWidth(),
+                heightUsed,
+                rightBorder,
+                heightUsed + landingTimeTextView.getMeasuredHeight()
+        );
+        heightUsed += takeOffTimeTextView.getMeasuredHeight();
+
+        // 3. Airports' codes row
+        departureCodeTextView.layout(
+                leftBorder,
+                heightUsed,
+                leftBorder + departureCodeTextView.getMeasuredWidth(),
+                heightUsed + departureCodeTextView.getMeasuredHeight()
+        );
+        arrivalCodeTextView.layout(
+                rightBorder - arrivalCodeTextView.getMeasuredWidth(),
+                heightUsed,
+                rightBorder,
+                heightUsed + arrivalCodeTextView.getMeasuredHeight()
+        );
+        heightUsed += departureCodeTextView.getMeasuredHeight();
+
+        // 4. Cities row
+        departureCityTextView.layout(
+                leftBorder,
+                heightUsed,
+                leftBorder + departureCityTextView.getMeasuredWidth(),
+                heightUsed + departureCityTextView.getMeasuredHeight()
+        );
+        arrivalCityTextView.layout(
+                rightBorder - arrivalCityTextView.getMeasuredWidth(),
+                heightUsed,
+                rightBorder,
+                heightUsed + arrivalCityTextView.getMeasuredHeight()
+        );
+        heightUsed += departureCityTextView.getMeasuredHeight() + dividerHeight;
+
+        // 5. Airports' names row
+        departureAirportNameTextView.layout(
+                leftBorder,
+                heightUsed,
+                leftBorder + departureAirportNameTextView.getMeasuredWidth(),
+                heightUsed + departureAirportNameTextView.getMeasuredHeight()
+        );
+        arrivalAirportNameTextView.layout(
+                rightBorder - arrivalAirportNameTextView.getMeasuredWidth(),
+                heightUsed,
+                rightBorder,
+                heightUsed + arrivalAirportNameTextView.getMeasuredHeight()
+        );
+        heightUsed += departureAirportNameTextView.getMeasuredHeight() + paddingInner + dividerHeight + paddingInner;
+
+        // 6. Flight duration row
+        durationTextView.layout(
+                centerHorizontal - durationTextView.getMeasuredWidth() / 2,
+                heightUsed,
+                centerHorizontal + durationTextView.getMeasuredWidth() - durationTextView.getMeasuredWidth() / 2,
+                heightUsed + durationTextView.getMeasuredHeight()
+        );
+
+        // 7. Plane image view
+        planeImageView.layout(
+                centerHorizontal - planeImageView.getMeasuredWidth() / 2,
+                centerVertical - planeImageView.getMeasuredHeight() / 2,
+                centerHorizontal + planeImageView.getMeasuredWidth() - planeImageView.getMeasuredWidth() / 2,
+                centerVertical + planeImageView.getMeasuredHeight() - planeImageView.getMeasuredHeight() / 2
+        );
     }
 
     public void bindFlight(@NonNull Flight flight) {
