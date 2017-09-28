@@ -11,6 +11,7 @@ import android.util.AttributeSet;
 import android.util.DisplayMetrics;
 import android.util.TypedValue;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.alemileev.customviewsample.R;
@@ -31,6 +32,7 @@ public final class FlightView extends ViewGroup {
     @Px private int paddingRight;
     @Px private int paddingBottom;
     @Px private int paddingInner;
+    @Px private int dividerHeight;
 
     @Dimension(unit = Dimension.SP) private float primaryTextSize;
     @Dimension(unit = Dimension.SP) private float secondaryTextSize;
@@ -46,6 +48,7 @@ public final class FlightView extends ViewGroup {
     private TextView arrivalCityTextView;
     private TextView arrivalAirportNameTextView;
     private TextView durationTextView;
+    private ImageView planeImageView;
 
     public FlightView(@NonNull Context context) {
         super(context);
@@ -79,6 +82,7 @@ public final class FlightView extends ViewGroup {
         paddingRight = dpToPx(8);
         paddingBottom = dpToPx(8);
         paddingInner = dpToPx(8);
+        dividerHeight = dpToPx(1);
 
         // Prepare text sizes
         primaryTextSize = 24;
@@ -139,6 +143,10 @@ public final class FlightView extends ViewGroup {
         durationTextView.setTextSize(secondaryTextSize);
         durationTextView.setTextColor(secondaryTextColor);
         addView(durationTextView);
+
+        planeImageView = new ImageView(context);
+        planeImageView.setImageResource(R.drawable.plane);
+        addView(planeImageView);
     }
 
     @Override
@@ -165,7 +173,6 @@ public final class FlightView extends ViewGroup {
         durationTextView.setText(flight.duration);
     }
 
-    @SuppressWarnings("SameParameterValue")
     @Px
     private int dpToPx(@Dimension(unit = Dimension.DP) int dp) {
         final Resources resources = getResources();
