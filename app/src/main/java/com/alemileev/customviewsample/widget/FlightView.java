@@ -32,6 +32,7 @@ public final class FlightView extends ViewGroup {
     @Px private int paddingVertical;
     @Px private int paddingInner;
     @Px private int dividerHeight;
+    @Px private int cornerRadius;
 
     @Dimension(unit = Dimension.SP) private float primaryTextSize;
     @Dimension(unit = Dimension.SP) private float secondaryTextSize;
@@ -80,6 +81,7 @@ public final class FlightView extends ViewGroup {
         paddingVertical = dpToPx(8);
         paddingInner = dpToPx(8);
         dividerHeight = dpToPx(1);
+        cornerRadius = dpToPx(16);
 
         // Prepare text sizes
         primaryTextSize = 24;
@@ -158,8 +160,6 @@ public final class FlightView extends ViewGroup {
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        widthMeasureSpec = getDefaultSize(getSuggestedMinimumWidth(), widthMeasureSpec);
-
         // Measure the plane image first, it's kind of anchor for other children
         measureChild(planeImageView, widthMeasureSpec, heightMeasureSpec);
 
@@ -216,8 +216,8 @@ public final class FlightView extends ViewGroup {
     protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
         // Prepare some dimens
         final int width = right - left;
-        final int leftBorder = left + paddingHorizontal;
-        final int rightBorder = right - paddingHorizontal;
+        final int leftBorder = paddingHorizontal;
+        final int rightBorder = width - paddingHorizontal;
         final int centerHorizontal = width / 2;
         final int centerVertical = (bottom - top) / 2;
 
