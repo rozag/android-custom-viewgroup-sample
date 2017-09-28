@@ -27,10 +27,8 @@ public final class FlightView extends ViewGroup {
     @ColorInt private int secondaryTextColor;
     @ColorInt private int dividerColor;
 
-    @Px private int paddingLeft;
-    @Px private int paddingTop;
-    @Px private int paddingRight;
-    @Px private int paddingBottom;
+    @Px private int paddingHorizontal;
+    @Px private int paddingVertical;
     @Px private int paddingInner;
     @Px private int dividerHeight;
 
@@ -77,10 +75,8 @@ public final class FlightView extends ViewGroup {
         dividerColor = ContextCompat.getColor(context, R.color.divider);
 
         // Prepare paddings
-        paddingLeft = dpToPx(8);
-        paddingTop = dpToPx(8);
-        paddingRight = dpToPx(8);
-        paddingBottom = dpToPx(8);
+        paddingHorizontal = dpToPx(8);
+        paddingVertical = dpToPx(8);
         paddingInner = dpToPx(8);
         dividerHeight = dpToPx(1);
 
@@ -151,7 +147,44 @@ public final class FlightView extends ViewGroup {
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        // TODO:
+        // Measure the plane image first, it's kind of anchor for other children
+        measureChild(planeImageView, widthMeasureSpec, heightMeasureSpec);
+
+        // Determine text width for the header views and the body views
+        final int bodyTextWidth = (widthMeasureSpec - planeImageView.getMeasuredWidth()) / 2 - paddingHorizontal - paddingInner;
+        final int headerTextWidth = widthMeasureSpec / 2 - paddingHorizontal;
+
+        // Measure children
+        measureChild(numberTextView, headerTextWidth, heightMeasureSpec);
+        measureChild(departureDateTextView, headerTextWidth, heightMeasureSpec);
+        measureChild(takeOffTimeTextView, bodyTextWidth, heightMeasureSpec);
+        measureChild(departureCodeTextView, bodyTextWidth, heightMeasureSpec);
+        measureChild(departureCityTextView, bodyTextWidth, heightMeasureSpec);
+        measureChild(departureAirportNameTextView, bodyTextWidth, heightMeasureSpec);
+        measureChild(landingTimeTextView, bodyTextWidth, heightMeasureSpec);
+        measureChild(arrivalCodeTextView, bodyTextWidth, heightMeasureSpec);
+        measureChild(arrivalCityTextView, bodyTextWidth, heightMeasureSpec);
+        measureChild(arrivalAirportNameTextView, bodyTextWidth, heightMeasureSpec);
+        measureChild(durationTextView, widthMeasureSpec, heightMeasureSpec);
+
+        // Calculate the height of the whole view
+        final int heightUsed = paddingVertical +
+                numberTextView.getMeasuredHeight() +
+                paddingInner +
+                paddingInner +
+                takeOffTimeTextView.getMeasuredHeight() +
+                departureCodeTextView.getMeasuredHeight() +
+                departureCityTextView.getMeasuredHeight() +
+                dividerHeight +
+                departureAirportNameTextView.getMeasuredHeight() +
+                paddingInner +
+                dividerHeight +
+                paddingInner +
+                durationTextView.getMeasuredHeight() +
+                paddingVertical;
+
+        // Finally, set the measured dimensions to the FlightView
+        setMeasuredDimension(widthMeasureSpec, heightUsed);
     }
 
     @Override
