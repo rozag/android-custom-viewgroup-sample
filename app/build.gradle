@@ -66,17 +66,5 @@ android {
 }
 
 dependencies {
-    // JUnit testing dependencies
-    testCompile "junit:junit:4.12"
-
-    // Android testing dependencies
-    androidTestCompile "junit:junit:4.12"
-    androidTestCompile("com.android.support.test.espresso:espresso-core:2.2.2", {
-        exclude group: "com.android.support", module: "support-annotations"
-    })
-
-    // Android support library
     compile "com.android.support:appcompat-v7:${supportLibraryVersion}"
-
-    // Your dependencies go here...
 }
