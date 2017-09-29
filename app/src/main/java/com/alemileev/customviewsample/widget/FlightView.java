@@ -3,6 +3,7 @@ import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Canvas;
 import android.graphics.Paint;
+import android.graphics.Rect;
 import android.graphics.RectF;
 import android.support.annotation.ColorInt;
 import android.support.annotation.Dimension;
@@ -20,9 +21,10 @@ import android.widget.TextView;
 
 import com.alemileev.customviewsample.R;
 import com.alemileev.customviewsample.model.Flight;
+import com.alemileev.customviewsample.shadow.RoundedRectShadowOwner;
 
 @SuppressWarnings("FieldCanBeLocal")
-public final class FlightView extends ViewGroup {
+public final class FlightView extends ViewGroup implements RoundedRectShadowOwner {
 
     @ColorInt private int headerColor;
     @ColorInt private int headerTextColor;
@@ -412,6 +414,17 @@ public final class FlightView extends ViewGroup {
         final Resources resources = getResources();
         final DisplayMetrics displayMetrics = resources.getDisplayMetrics();
         return (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp, displayMetrics);
+    }
+
+    @NonNull
+    @Override
+    public Rect cardBackgroundRect() {
+        return new Rect(0, 0, getWidth(), getHeight());
+    }
+
+    @Override
+    public float cardCornerRadius() {
+        return cornerRadius;
     }
 
 }

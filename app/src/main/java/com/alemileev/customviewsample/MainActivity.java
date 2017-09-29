@@ -1,5 +1,6 @@
 package com.alemileev.customviewsample;
 
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
@@ -7,6 +8,7 @@ import android.widget.TextView;
 
 import com.alemileev.customviewsample.model.Airport;
 import com.alemileev.customviewsample.model.Flight;
+import com.alemileev.customviewsample.shadow.RoundedRectViewOutlineProvider;
 import com.alemileev.customviewsample.widget.FlightView;
 
 public class MainActivity extends AppCompatActivity {
@@ -66,6 +68,9 @@ public class MainActivity extends AppCompatActivity {
             }
         });
         customFlightView.bindFlight(FLIGHT);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            customFlightView.setOutlineProvider(new RoundedRectViewOutlineProvider());
+        }
     }
 
 }
