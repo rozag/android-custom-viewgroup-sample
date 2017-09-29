@@ -3,6 +3,7 @@ import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Canvas;
 import android.graphics.Paint;
+import android.graphics.Path;
 import android.graphics.Rect;
 import android.graphics.RectF;
 import android.support.annotation.ColorInt;
@@ -44,6 +45,7 @@ public final class FlightView extends ViewGroup implements RoundedRectShadowOwne
 
     private Paint paint;
     private RectF rect;
+    private Path cardBordersPath;
 
     private TextView numberTextView;
     private TextView departureDateTextView;
@@ -98,6 +100,7 @@ public final class FlightView extends ViewGroup implements RoundedRectShadowOwne
         // Prepare drawing objects
         paint = new Paint(Paint.ANTI_ALIAS_FLAG);
         rect = new RectF();
+        cardBordersPath = new Path();
 
         // Instantiate, setup and attach child views
         numberTextView = new TextView(context);
@@ -390,6 +393,11 @@ public final class FlightView extends ViewGroup implements RoundedRectShadowOwne
                 largeDividerY,
                 paint
         );
+
+        // Prevent drawing touch feedback outside
+        rect.set(0, 0, width, height);
+        cardBordersPath.addRoundRect(rect, cornerRadius, cornerRadius, Path.Direction.CCW);
+        canvas.clipPath(cardBordersPath);
 
         // Draw children
         super.dispatchDraw(canvas);

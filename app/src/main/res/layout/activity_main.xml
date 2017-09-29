@@ -43,6 +43,7 @@
         android:layout_height="wrap_content"
         android:layout_marginLeft="8dp"
         android:layout_marginRight="8dp"
-        android:elevation="2dp"/>
+        android:elevation="2dp"
+        android:foreground="?attr/selectableItemBackground"/>
 
 </LinearLayout>
