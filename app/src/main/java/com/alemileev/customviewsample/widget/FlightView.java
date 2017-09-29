@@ -1,6 +1,9 @@
 package com.alemileev.customviewsample.widget;
 import android.content.Context;
 import android.content.res.Resources;
+import android.graphics.Canvas;
+import android.graphics.Paint;
+import android.graphics.RectF;
 import android.support.annotation.ColorInt;
 import android.support.annotation.Dimension;
 import android.support.annotation.NonNull;
@@ -36,6 +39,9 @@ public final class FlightView extends ViewGroup {
 
     @Dimension(unit = Dimension.SP) private float primaryTextSize;
     @Dimension(unit = Dimension.SP) private float secondaryTextSize;
+
+    private Paint paint;
+    private RectF rect;
 
     private TextView numberTextView;
     private TextView departureDateTextView;
@@ -86,6 +92,10 @@ public final class FlightView extends ViewGroup {
         // Prepare text sizes
         primaryTextSize = 24;
         secondaryTextSize = 14;
+
+        // Prepare drawing objects
+        paint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        rect = new RectF();
 
         // Instantiate, setup and attach child views
         numberTextView = new TextView(context);
@@ -160,6 +170,8 @@ public final class FlightView extends ViewGroup {
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+        widthMeasureSpec = getDefaultSize(getSuggestedMinimumWidth(), widthMeasureSpec);
+
         // Measure the plane image first, it's kind of anchor for other children
         measureChild(planeImageView, widthMeasureSpec, heightMeasureSpec);
 
@@ -315,6 +327,70 @@ public final class FlightView extends ViewGroup {
                 centerHorizontal + planeImageView.getMeasuredWidth() - planeImageView.getMeasuredWidth() / 2,
                 centerVertical + planeImageView.getMeasuredHeight() - planeImageView.getMeasuredHeight() / 2
         );
+    }
+
+    @Override
+    protected void dispatchDraw(Canvas canvas) {
+        final int width = canvas.getWidth();
+        final int height = canvas.getHeight();
+
+        // Draw card header background
+        paint.setColor(headerColor);
+        final int headerHeight = paddingVertical + numberTextView.getMeasuredHeight() + paddingInner;
+        rect.set(0, 0, width, headerHeight + cornerRadius);
+        canvas.save();
+        canvas.clipRect(0, 0, width, headerHeight);
+        canvas.drawRoundRect(
+                rect,
+                cornerRadius,
+                cornerRadius,
+                paint
+        );
+        canvas.restore();
+
+        // Draw card background
+        paint.setColor(cardBackgroundColor);
+        rect.set(0, headerHeight - cornerRadius, width, height);
+        canvas.save();
+        canvas.clipRect(0, headerHeight, width, height);
+        canvas.drawRoundRect(
+                rect,
+                cornerRadius,
+                cornerRadius,
+                paint
+        );
+        canvas.restore();
+
+        // Draw dividers
+        //noinspection SuspiciousNameCombination
+        paint.setStrokeWidth(dividerHeight);
+        paint.setColor(dividerColor);
+        final float smallDividerY = departureCityTextView.getBottom() + dividerHeight / 2f + 1;
+        canvas.drawLine(
+                paddingHorizontal,
+                smallDividerY,
+                planeImageView.getLeft() - paddingInner,
+                smallDividerY,
+                paint
+        );
+        canvas.drawLine(
+                planeImageView.getRight() + paddingInner,
+                smallDividerY,
+                width - paddingHorizontal,
+                smallDividerY,
+                paint
+        );
+        final float largeDividerY = departureAirportNameTextView.getBottom() + paddingInner + dividerHeight / 2f + 1;
+        canvas.drawLine(
+                0,
+                largeDividerY,
+                width,
+                largeDividerY,
+                paint
+        );
+
+        // Draw children
+        super.dispatchDraw(canvas);
     }
 
     public void bindFlight(@NonNull Flight flight) {
