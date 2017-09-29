@@ -160,6 +160,8 @@ public final class FlightView extends ViewGroup {
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+        widthMeasureSpec = getDefaultSize(getSuggestedMinimumWidth(), widthMeasureSpec);
+       
         // Measure the plane image first, it's kind of anchor for other children
         measureChild(planeImageView, widthMeasureSpec, heightMeasureSpec);
 
