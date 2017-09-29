@@ -1,6 +1,6 @@
 # android-custom-viewgroup-sample
+Sample of a custom Android ViewGroup implementation
+![Screenshot](/static/screenshot.png)
+
 ## TODOs
-* More details
 * Link to the video
-* Screenshot
-* Warning about some hacks and hardcoded stuff
