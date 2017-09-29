@@ -14,18 +14,22 @@ import android.support.annotation.Px;
 import android.support.v4.content.ContextCompat;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.alemileev.customviewsample.MeasureCounter;
 import com.alemileev.customviewsample.R;
 import com.alemileev.customviewsample.model.Flight;
 import com.alemileev.customviewsample.shadow.RoundedRectShadowOwner;
 
 @SuppressWarnings("FieldCanBeLocal")
 public final class FlightView extends ViewGroup implements RoundedRectShadowOwner {
+
+    private final MeasureCounter counter = MeasureCounter.getInstance();
 
     @ColorInt private int headerColor;
     @ColorInt private int headerTextColor;
@@ -77,6 +81,7 @@ public final class FlightView extends ViewGroup implements RoundedRectShadowOwne
 
     private void init(@NonNull Context context) {
         setClipToPadding(false);
+        setTag("CUSTOM");
 
         // Prepare colors
         headerColor = ContextCompat.getColor(context, R.color.primary);
@@ -103,72 +108,84 @@ public final class FlightView extends ViewGroup implements RoundedRectShadowOwne
         cardBordersPath = new Path();
 
         // Instantiate, setup and attach child views
-        numberTextView = new TextView(context);
+        numberTextView = new MeasureTextView(context);
+        numberTextView.setTag("CUSTOM");
         numberTextView.setTextSize(primaryTextSize);
         numberTextView.setTextColor(headerTextColor);
         numberTextView.setGravity(Gravity.START);
         addView(numberTextView);
 
-        departureDateTextView = new TextView(context);
+        departureDateTextView = new MeasureTextView(context);
+        departureDateTextView.setTag("CUSTOM");
         departureDateTextView.setTextSize(primaryTextSize);
         departureDateTextView.setTextColor(headerTextColor);
         departureDateTextView.setGravity(Gravity.END);
         addView(departureDateTextView);
 
-        takeOffTimeTextView = new TextView(context);
+        takeOffTimeTextView = new MeasureTextView(context);
+        takeOffTimeTextView.setTag("CUSTOM");
         takeOffTimeTextView.setTextSize(primaryTextSize);
         takeOffTimeTextView.setTextColor(primaryTextColor);
         takeOffTimeTextView.setGravity(Gravity.START);
         addView(takeOffTimeTextView);
 
-        departureCodeTextView = new TextView(context);
+        departureCodeTextView = new MeasureTextView(context);
+        departureCodeTextView.setTag("CUSTOM");
         departureCodeTextView.setTextSize(primaryTextSize);
         departureCodeTextView.setTextColor(primaryTextColor);
         departureCodeTextView.setGravity(Gravity.START);
         addView(departureCodeTextView);
 
-        departureCityTextView = new TextView(context);
+        departureCityTextView = new MeasureTextView(context);
+        departureCityTextView.setTag("CUSTOM");
         departureCityTextView.setTextSize(secondaryTextSize);
         departureCityTextView.setTextColor(secondaryTextColor);
         departureCityTextView.setGravity(Gravity.START);
         addView(departureCityTextView);
 
-        departureAirportNameTextView = new TextView(context);
+        departureAirportNameTextView = new MeasureTextView(context);
+        departureAirportNameTextView.setTag("CUSTOM");
         departureAirportNameTextView.setTextSize(secondaryTextSize);
         departureAirportNameTextView.setTextColor(secondaryTextColor);
         departureAirportNameTextView.setGravity(Gravity.START);
         addView(departureAirportNameTextView);
 
-        landingTimeTextView = new TextView(context);
+        landingTimeTextView = new MeasureTextView(context);
+        landingTimeTextView.setTag("CUSTOM");
         landingTimeTextView.setTextSize(primaryTextSize);
         landingTimeTextView.setTextColor(primaryTextColor);
         landingTimeTextView.setGravity(Gravity.END);
         addView(landingTimeTextView);
 
-        arrivalCodeTextView = new TextView(context);
+        arrivalCodeTextView = new MeasureTextView(context);
+        arrivalCodeTextView.setTag("CUSTOM");
         arrivalCodeTextView.setTextSize(primaryTextSize);
         arrivalCodeTextView.setTextColor(primaryTextColor);
         arrivalCodeTextView.setGravity(Gravity.END);
         addView(arrivalCodeTextView);
 
-        arrivalCityTextView = new TextView(context);
+        arrivalCityTextView = new MeasureTextView(context);
+        arrivalCityTextView.setTag("CUSTOM");
         arrivalCityTextView.setTextSize(secondaryTextSize);
         arrivalCityTextView.setTextColor(secondaryTextColor);
         arrivalCityTextView.setGravity(Gravity.END);
         addView(arrivalCityTextView);
 
-        arrivalAirportNameTextView = new TextView(context);
+        arrivalAirportNameTextView = new MeasureTextView(context);
+        arrivalAirportNameTextView.setTag("CUSTOM");
         arrivalAirportNameTextView.setTextSize(secondaryTextSize);
         arrivalAirportNameTextView.setTextColor(secondaryTextColor);
         arrivalAirportNameTextView.setGravity(Gravity.END);
         addView(arrivalAirportNameTextView);
 
-        durationTextView = new TextView(context);
+        durationTextView = new MeasureTextView(context);
+        durationTextView.setTag("CUSTOM");
         durationTextView.setTextSize(secondaryTextSize);
         durationTextView.setTextColor(secondaryTextColor);
         addView(durationTextView);
 
-        planeImageView = new ImageView(context);
+        planeImageView = new MeasureImageView(context);
+        planeImageView.setTag("CUSTOM");
         planeImageView.setImageResource(R.drawable.plane);
         addView(planeImageView);
     }
@@ -227,6 +244,9 @@ public final class FlightView extends ViewGroup implements RoundedRectShadowOwne
 
         // Finally, set the measured dimensions to the FlightView
         setMeasuredDimension(widthMeasureSpec, heightUsed);
+
+        Log.d(MeasureCounter.TAG, "[" + getTag() + "] FlightView onMeasure()");
+        counter.countOnMeasure((String) getTag());
     }
 
     @Override
@@ -395,6 +415,7 @@ public final class FlightView extends ViewGroup implements RoundedRectShadowOwne
         );
 
         // Prevent drawing touch feedback outside
+        cardBordersPath.reset();
         rect.set(0, 0, width, height);
         cardBordersPath.addRoundRect(rect, cornerRadius, cornerRadius, Path.Direction.CCW);
         canvas.clipPath(cardBordersPath);

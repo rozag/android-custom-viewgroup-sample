@@ -23,9 +23,13 @@ public class MainActivity extends AppCompatActivity {
             new Airport("LAX", "Los Angeles, US", "Los Angeles International Airport")
     );
 
+    private final MeasureCounter counter = MeasureCounter.getInstance();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        counter.printStats();
+        counter.reset();
         setContentView(R.layout.activity_main);
 
         // Bind flight to the simple XML implementation
